@@ -1,26 +1,26 @@
 package com.emapel.seeyou.seeyou;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.emapel.seeyou.seeyou.signIn.FragmentSignIn;
+import com.emapel.seeyou.seeyou.signIn.FragmentSignUp;
+import com.emapel.seeyou.seeyou.signIn.PageAdapterLogin;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class LoginActivity extends AppCompatActivity {
-    private EditText userEmail;
-    private EditText userPass;
-    private TextView tvSignUp;
+public class LoginActivity extends AppCompatActivity implements FragmentSignIn.OnFragmentInteractionListener, FragmentSignUp.OnFragmentInteractionListener{
+    private ViewPager viewPager;
 
     private FirebaseAuth mAuth;
     @Override
@@ -28,35 +28,40 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        viewPager = findViewById(R.id.vpLogin);
+        TabLayout tabLayout = findViewById(R.id.tabLogin);
+        tabLayout.getTabAt(0).setText("LOGAR");
+        tabLayout.getTabAt(1).setText("REGISTAR");
+        PageAdapterLogin pageAdapter = new PageAdapterLogin(getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(pageAdapter);
 
-
-        // LOGIN
-        userEmail = findViewById(R.id.etLoginUser);
-        userPass = findViewById(R.id.etLoginPass);
-
-        mAuth = FirebaseAuth.getInstance();
-
-        Button btnAcess = findViewById(R.id.btnLoginAcess);
-
-
-
-        // CLICK IN BUTTON 'SIGN UP' - CADASTRAR
-        tvSignUp = findViewById(R.id.tvLoginSignUp);
-
-        tvSignUp.setOnClickListener(new View.OnClickListener() {
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, SignUp.class));
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
+//        // LOGIN
+//        userEmail = findViewById(R.id.etLoginUser);
+//        userPass = findViewById(R.id.etLoginPass);
+//
+          mAuth = FirebaseAuth.getInstance();
+//
+//        Button btnAcess = findViewById(R.id.btnLoginAcess);
 
-        // CLICK IN BUTTON 'ACCESS'  - ACESSAR
-        btnAcess.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginUser(userEmail.getText().toString(), userPass.getText().toString());
-            }
-        });
+
+
     }
 
     @Override
@@ -89,5 +94,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

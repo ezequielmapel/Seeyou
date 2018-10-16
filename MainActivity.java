@@ -13,7 +13,8 @@ import com.emapel.seeyou.seeyou.otherviews.SeeFragment;
 import com.emapel.seeyou.seeyou.otherviews.SettingsFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, SeeFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener, SeeFragment.OnFragmentInteractionListener,
+        SettingsFragment.OnFragmentInteractionListener {
     private User user = new User();
     @Override
     protected void onCreate(Bundle savedInstanceState) {

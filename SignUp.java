@@ -1,156 +1,146 @@
 package com.emapel.seeyou.seeyou;
 
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
-public class SignUp extends AppCompatActivity {
+import com.emapel.seeyou.seeyou.classes.User;
+import com.google.firebase.auth.FirebaseAuth;
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+public class SignUp extends AppCompatActivity{
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
+    // ELEMENTS
+    private Button btnNext;
+    private Button btnBack;
+    private ImageButton btnBackLogin;
+    private ViewPager viewPager;
+    private User user;
+    // STRINGS
+    private String nameUser, pass1User, pass2User;
+    private String emailUser, cpfUser;
+
+    // FIREBASE
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        //EDIT TEXT
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+
+        //BUTTONS
+        btnNext = findViewById(R.id.btnProxSignup);
+        btnBack = findViewById(R.id.btnBackSignup);
+        btnBackLogin = findViewById(R.id.btnBackLogin);
+
+        //FIREBASE
+        mAuth = FirebaseAuth.getInstance();
+
+        // ADAPTER
+        final TabLayout tabLayout = findViewById(R.id.tabsSignUp);
+
+        viewPager = findViewById(R.id.viewpagerSignUp);
+        //final PageAdapterSignUp pageAdapter = new PageAdapterSignUp(getSupportFragmentManager(), tabLayout.getTabCount());
+        //viewPager.setAdapter(pageAdapter);
+
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+                changeButton(btnNext, btnBack,btnBackLogin, tabLayout);
+
+                if(tab.getPosition()==2){
+                    //getStringFromElements(etNameUser, etPass1User, etPass2user, etEmailUser, etCpfUser);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+
+
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(tabLayout.getSelectedTabPosition()+1);
+                changeButton(btnNext, btnBack,btnBackLogin, tabLayout);
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(tabLayout.getSelectedTabPosition()-1);
+                changeButton(btnNext, btnBack,btnBackLogin, tabLayout);
+            }
+        });
+
+        btnBackLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_sign_up, menu);
-        return true;
-    }
+    private void changeButton(Button btnNext,Button btnBack, ImageButton btnBackLogin, TabLayout tabLayout) {
+        // This function change de button on SignUp activity
+        if (tabLayout.getSelectedTabPosition() == 2) {
+           btnNext.setVisibility(View.INVISIBLE);
+           btnBackLogin.setVisibility(View.VISIBLE);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        }else if(tabLayout.getSelectedTabPosition() == 1){
+            btnNext.setVisibility(View.VISIBLE);
+            btnBack.setVisibility(View.VISIBLE);
+            btnBackLogin.setVisibility(View.INVISIBLE);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_sign_up, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-
-            // ELEMETNS FROM LAYOUT SIGN UP
-
-            EditText etNameUser = rootView.findViewById(R.id.etNameUser);
-            EditText etEmailUser = rootView.findViewById(R.id.etEmailUser);
-
-
-            switch (getArguments().getInt(ARG_SECTION_NUMBER)){
-                case 1:
-                    //rootView = inflater.inflate(, container, false);
-                    break;
-            }
-
-            return rootView;
+            btnNext.setText("CONFIRMAR");
+        } else{
+            btnNext.setVisibility(View.VISIBLE);
+            btnBack.setVisibility(View.INVISIBLE);
         }
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private void getStringFromElements(EditText etNameUser, EditText etPass1User, EditText etPass2user, EditText etEmailUser, EditText etCpfUser){
 
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+        nameUser = etNameUser.getText().toString().trim();
+        emailUser = etEmailUser.getText().toString().trim();
+        pass1User = etPass1User.getText().toString().trim();
+        pass2User = etPass2user.getText().toString().trim();
+        cpfUser = etCpfUser.getText().toString().trim();
 
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
+        checkPasswords(pass1User, pass2User);
 
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
+        Toast.makeText(this, ""+nameUser, Toast.LENGTH_SHORT).show();
+    }
+
+    private void checkPasswords(String pass1User, String pass2User){
+        if(pass1User != pass2User){
+            Toast.makeText(this, "Senhas não conferem...", Toast.LENGTH_SHORT).show();
         }
     }
+
 }
